@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form method="get" class="filters">
+  <label>
+    Categoria:
+    <select name="category" onchange="this.form.submit()">
+      <option value="">Todas</option>
+      {% for cat in all_categories %}
+        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>
+    Status:
+    <select name="status" onchange="this.form.submit()">
+      <option value="">Todos</option>
+      <option value="pendente" {% if selected_status == "pendente" %}selected{% endif %}>Pendente</option>
+      <option value="enviado" {% if selected_status == "enviado" %}selected{% endif %}>Enviado</option>
+    </select>
+  </label>
+</form>
+
+{% if not products %}
+  <p class="empty-state">Nenhum produto encontrado. Importe um CSV ou cadastre um produto manualmente.</p>
+{% endif %}
+
+<div class="product-grid">
+  {% for p in products %}
+  <div class="product-card status-{{ p.status }}">
+    <div class="product-card-header">
+      <span class="badge badge-category">{{ p.category }}</span>
+      <span class="badge badge-status">{{ p.status }}</span>
+    </div>
+
+    <h3>{{ p.name }}</h3>
+
+    <div class="product-meta">
+      <span>🌐 {{ p.platform or "-" }}</span>
+      {% if p.store_name %}<span>🏬 {{ p.store_name }}</span>{% endif %}
+      {% if p.original_price %}
+        <span>💵 de R$ {{ "%.2f"|format(p.original_price)|replace(".", ",") }} por R$ {{ "%.2f"|format(p.promo_price)|replace(".", ",") }}</span>
+      {% else %}
+        <span>💵 R$ {{ "%.2f"|format(p.promo_price)|replace(".", ",") }}</span>
+      {% endif %}
+      {% if p.commission %}<span>📈 Comissão: {{ p.commission }}{% if p.commission_rate %} ({{ p.commission_rate }}){% endif %}</span>{% endif %}
+    </div>
+
+    <textarea class="generated-text" id="text-{{ p.id }}" readonly rows="6">{{ p.generated_text }}</textarea>
+    <button type="button" class="btn copy-btn" data-copy-target="text-{{ p.id }}">📋 Copiar texto</button>
+
+    <div class="product-actions">
+      <form method="post" action="{{ url_for('set_category', product_id=p.id) }}">
+        <select name="category" onchange="this.form.submit()">
+          {% for cat in all_categories %}
+            <option value="{{ cat }}" {% if cat == p.category %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </form>
+
+      <form method="post" action="{{ url_for('set_status', product_id=p.id) }}">
+        {% if p.status == "pendente" %}
+          <input type="hidden" name="status" value="enviado">
+          <button type="submit" class="btn btn-primary">Marcar como enviado</button>
+        {% else %}
+          <input type="hidden" name="status" value="pendente">
+          <button type="submit" class="btn">Marcar como pendente</button>
+        {% endif %}
+      </form>
+
+      <form method="post" action="{{ url_for('delete_product', product_id=p.id) }}" onsubmit="return confirm('Remover este produto?')">
+        <button type="submit" class="btn btn-danger">Excluir</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

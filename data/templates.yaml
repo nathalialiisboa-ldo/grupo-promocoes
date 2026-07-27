@@ -1,0 +1,33 @@
+# Modelos de texto de divulgação por categoria.
+# Edite livremente "intro" e "urgencia" para ajustar o tom sem mexer em código.
+# O resto do texto (preço, kit, cupom, detalhes, link) é montado automaticamente.
+
+"Roupas":
+  intro: "🔥 Arrasou! Essa peça é o que faltava no seu closet"
+  urgencia: "✨ Poucas unidades, garanta a sua antes que acabe!"
+  unidade_kit: "peça"
+
+"Calçados":
+  intro: "👠 Conforto e estilo que combina com TUDO"
+  urgencia: "⏳ Promoção relâmpago, corre que é por tempo limitado!"
+  unidade_kit: "par"
+
+"Beleza e cosméticos":
+  intro: "💄 Seu ritual de beleza merece esse upgrade"
+  urgencia: "✨ Estoque limitado, quem chegar primeiro leva!"
+  unidade_kit: "unidade"
+
+"Eletrônicos de beleza":
+  intro: "⚡ Esse é o queridinho que vai transformar sua rotina"
+  urgencia: "🔋 Poucas unidades com esse preço, aproveita agora!"
+  unidade_kit: "unidade"
+
+"Casa e acessórios":
+  intro: "🏠 Aquele detalhe que faz toda diferença"
+  urgencia: "🛒 Sai por esse preço só enquanto durar o estoque!"
+  unidade_kit: "unidade"
+
+"Fora do escopo":
+  intro: "📦 Achado bacana pra conferir"
+  urgencia: "✨ Aproveita enquanto tem estoque!"
+  unidade_kit: "unidade"

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Cadastrar produto manualmente</h2>
+
+<form method="post" class="form">
+  <label>
+    Categoria
+    <select name="category">
+      <option value="">Deixar categorização automática decidir</option>
+      {% for cat in all_categories %}
+        <option value="{{ cat }}">{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>
+    Nome do produto *
+    <input type="text" name="name" required>
+  </label>
+
+  <label>
+    Preço original (opcional)
+    <input type="text" name="original_price" placeholder="Ex: 59,90">
+  </label>
+
+  <label>
+    Preço promocional *
+    <input type="text" name="promo_price" required placeholder="Ex: 39,90">
+  </label>
+
+  <label>
+    Site *
+    <select name="site" required>
+      {% for site in platforms %}
+        <option value="{{ site }}">{{ site }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>
+    Link de afiliada *
+    <input type="url" name="link" required>
+  </label>
+
+  <label>
+    Cupom (opcional)
+    <input type="text" name="coupon">
+  </label>
+
+  <label>
+    Detalhes extras (opcional)
+    <textarea name="extra_details" rows="2" placeholder="Ex: Disponível nas cores azul e rosa, tamanhos P ao GG"></textarea>
+  </label>
+
+  <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>
+{% endblock %}

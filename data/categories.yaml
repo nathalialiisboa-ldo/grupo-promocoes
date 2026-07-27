@@ -1,0 +1,179 @@
+# Palavras-chave usadas para categorizar produtos automaticamente pelo nome.
+# A ordem importa: a primeira categoria cuja lista bater com o nome do produto
+# vence (por isso "Eletrônicos de beleza" vem antes de "Beleza e cosméticos",
+# já que termos como "escova secadora" precisam ser pegos como eletrônico).
+#
+# Pode editar/adicionar palavras livremente sem mexer no código.
+# Se nenhuma categoria bater, o produto vira "Fora do escopo".
+
+fora_do_escopo: "Fora do escopo"
+
+order:
+  - "Eletrônicos de beleza"
+  - "Roupas"
+  - "Calçados"
+  - "Beleza e cosméticos"
+  - "Casa e acessórios"
+
+keywords:
+  "Eletrônicos de beleza":
+    - secador de cabelo
+    - secador
+    - mini secador
+    - chapinha
+    - prancha de cabelo
+    - prancha alisadora
+    - babyliss
+    - modelador de cachos
+    - modelador de cabelo
+    - escova secadora
+    - escova modeladora
+    - escova alisadora
+    - escova rotativa
+    - depilador
+    - depiladora
+    - epilador
+    - epiladora
+    - aparador de pelos
+    - difusor de cabelo
+
+  "Roupas":
+    - vestido
+    - blusa
+    - blusinha
+    - camiseta
+    - camisa
+    - regata
+    - cropped
+    - calça
+    - calca
+    - short
+    - shorts
+    - bermuda
+    - saia
+    - jaqueta
+    - casaco
+    - moletom
+    - macacão
+    - macacao
+    - macaquinho
+    - blazer
+    - legging
+    - kimono
+    - body
+    - biquíni
+    - biquini
+    - maiô
+    - maio
+    - pijama
+    - conjunto de roupa
+    - conjunto feminino
+    - conjunto masculino
+    - lingerie
+    - sutiã
+    - sutia
+    - calcinha
+    - cueca
+    - roupão
+    - roupao
+
+  "Calçados":
+    - tênis
+    - tenis
+    - sapato
+    - sapatênis
+    - sapatenis
+    - sandália
+    - sandalia
+    - chinelo
+    - bota
+    - botina
+    - sapatilha
+    - salto alto
+    - rasteirinha
+    - rasteira
+    - mule
+    - papete
+    - chuteira
+    - alpargata
+
+  "Beleza e cosméticos":
+    - maquiagem
+    - batom
+    - base facial
+    - corretivo
+    - pó compacto
+    - po compacto
+    - sombra
+    - paleta de sombra
+    - delineador
+    - rímel
+    - rimel
+    - máscara de cílios
+    - mascara de cilios
+    - gloss
+    - blush
+    - iluminador
+    - primer
+    - skincare
+    - skin care
+    - hidratante
+    - hidratante facial
+    - hidratante corporal
+    - protetor solar
+    - sérum
+    - serum
+    - creme facial
+    - creme corporal
+    - creme para
+    - óleo capilar
+    - oleo capilar
+    - óleos capilares
+    - oleos capilares
+    - óleo corporal
+    - oleo corporal
+    - capilar
+    - shampoo
+    - condicionador
+    - máscara capilar
+    - mascara capilar
+    - leave-in
+    - leave in
+    - perfume
+    - colônia
+    - colonia
+    - esmalte
+    - sabonete
+    - kit skincare
+    - ácido hialurônico
+    - acido hialuronico
+    - vitamina c
+
+  "Casa e acessórios":
+    - organizador
+    - jogo de cama
+    - edredom
+    - toalha
+    - cortina
+    - tapete
+    - luminária
+    - luminaria
+    - panela
+    - utensílio
+    - utensilio
+    - decoração
+    - decoracao
+    - cesto organizador
+    - prateleira
+    - mochila
+    - bolsa
+    - carteira
+    - necessaire
+    - capinha de celular
+    - capa de celular
+    - suporte para celular
+    - suporte de celular
+    - relógio
+    - relogio
+    - óculos de sol
+    - oculos de sol
