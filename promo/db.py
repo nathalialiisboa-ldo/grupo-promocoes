@@ -207,3 +207,14 @@ def delete_product(product_id: int):
     conn.execute("DELETE FROM products WHERE id = ?", (product_id,))
     conn.commit()
     conn.close()
+
+
+def delete_all_products() -> int:
+    """Apaga todos os produtos da lista, de qualquer origem. Retorna quantos
+    foram removidos."""
+    conn = get_connection()
+    count = conn.execute("SELECT COUNT(*) AS n FROM products").fetchone()["n"]
+    conn.execute("DELETE FROM products")
+    conn.commit()
+    conn.close()
+    return count

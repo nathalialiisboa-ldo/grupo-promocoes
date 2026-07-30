@@ -168,5 +168,12 @@ def delete_product(product_id):
     return redirect(request.referrer or url_for("index"))
 
 
+@app.route("/products/clear-all", methods=["POST"])
+def clear_all_products():
+    count = db.delete_all_products()
+    flash(f"{count} produto(s) removido(s). Lista zerada.", "success")
+    return redirect(url_for("index"))
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

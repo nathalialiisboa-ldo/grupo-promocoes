@@ -31,6 +31,11 @@
   <button type="submit" class="btn">🔄 Buscar ofertas Shopee agora</button>
 </form>
 
+<form method="post" action="{{ url_for('clear_all_products') }}" class="filters"
+      onsubmit="return confirm('Isso vai apagar TODOS os produtos da lista (de qualquer origem: Shopee, CSV, cadastro manual), incluindo os já marcados como enviado. Essa ação não pode ser desfeita. Quer continuar?')">
+  <button type="submit" class="btn btn-danger">🗑️ Limpar tudo</button>
+</form>
+
 {% if not products %}
   <p class="empty-state">Nenhum produto encontrado. Importe um CSV ou cadastre um produto manualmente.</p>
 {% endif %}
