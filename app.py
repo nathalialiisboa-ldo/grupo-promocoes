@@ -68,6 +68,8 @@ def add_product():
             "coupon": request.form.get("coupon", "").strip() or None,
             "extra_details": request.form.get("extra_details", "").strip() or None,
             "status": "pendente",
+            "brand": request.form["brand"].strip(),
+            "image_url": request.form.get("image_url", "").strip() or None,
         }
         db.insert_product(product)
         flash(f'Produto "{name}" cadastrado com sucesso!', "success")

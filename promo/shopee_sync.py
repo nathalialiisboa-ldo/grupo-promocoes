@@ -77,6 +77,8 @@ def _map_node_to_product(node: dict) -> dict:
         "coupon": None,
         "extra_details": None,
         "status": "pendente",
+        "brand": None,
+        "image_url": node.get("imageUrl"),
     }
 
 

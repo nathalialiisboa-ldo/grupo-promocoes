@@ -28,6 +28,7 @@ query ProductOffer($keyword: String, $sortType: Int, $page: Int, $limit: Int) {
       productLink
       offerLink
       shopName
+      imageUrl
     }
     pageInfo {
       page

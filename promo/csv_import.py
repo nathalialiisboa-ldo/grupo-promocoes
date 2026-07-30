@@ -14,6 +14,8 @@ ORIGINAL_PRICE_ALIASES = ["original price", "preco original", "preco antes", "pr
 COMMISSION_RATE_ALIASES = ["commission rate", "taxa de comissao", "comissao (%)", "% comissao"]
 COMMISSION_ALIASES = ["commission", "comissao", "valor da comissao", "valor comissao"]
 STORE_NAME_ALIASES = ["nome da loja", "loja", "store name", "seller", "vendedor"]
+BRAND_ALIASES = ["brand", "marca"]
+IMAGE_ALIASES = ["image", "image url", "imagem", "foto", "picture", "product image", "img"]
 
 # Link: prioriza o link de oferta (já com tag de afiliada); cai para o link
 # de produto simples se não houver.
@@ -105,6 +107,8 @@ def parse_csv(file_stream, platform: str):
         commission_rate = _find_value(row_by_normalized_header, COMMISSION_RATE_ALIASES)
         commission = _find_value(row_by_normalized_header, COMMISSION_ALIASES)
         store_name = _find_value(row_by_normalized_header, STORE_NAME_ALIASES)
+        brand = _find_value(row_by_normalized_header, BRAND_ALIASES)
+        image_url = _find_value(row_by_normalized_header, IMAGE_ALIASES)
 
         products.append(
             {
@@ -120,6 +124,8 @@ def parse_csv(file_stream, platform: str):
                 "coupon": None,
                 "extra_details": None,
                 "status": "pendente",
+                "brand": brand,
+                "image_url": image_url,
             }
         )
 

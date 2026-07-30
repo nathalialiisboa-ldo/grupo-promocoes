@@ -1,33 +1,65 @@
 # Modelos de texto de divulgação por categoria.
-# Edite livremente "intro" e "urgencia" para ajustar o tom sem mexer em código.
-# O resto do texto (preço, kit, cupom, detalhes, link) é montado automaticamente.
+# Cada categoria tem uma lista de "variants" (variações de intro + urgência).
+# O app escolhe uma variação diferente por produto (sempre a mesma pro mesmo
+# produto, mas variando entre produtos diferentes), pra não ficar tudo com
+# a cara idêntica quando vários produtos parecidos aparecem seguidos.
+# Edite ou adicione variações livremente, sem mexer em código. O resto do
+# texto (preço, kit, cupom, detalhes, marca, link) é montado automaticamente.
 
 "Roupas":
-  intro: "🔥 Arrasou! Essa peça é o que faltava no seu closet"
-  urgencia: "✨ Poucas unidades, garanta a sua antes que acabe!"
   unidade_kit: "peça"
+  variants:
+    - intro: "🔥 Arrasou! Essa peça é o que faltava no seu closet"
+      urgencia: "✨ Poucas unidades, garanta a sua antes que acabe!"
+    - intro: "👗 Visual novo, orçamento baixo, bora aproveitar"
+      urgencia: "⏰ Corre que essa promoção não fica disponível por muito tempo!"
+    - intro: "✨ Charme que cabe no bolso, essa peça é sucesso"
+      urgencia: "🛍️ Estoque acabando, garanta já a sua!"
 
 "Calçados":
-  intro: "👠 Conforto e estilo que combina com TUDO"
-  urgencia: "⏳ Promoção relâmpago, corre que é por tempo limitado!"
   unidade_kit: "par"
+  variants:
+    - intro: "👠 Conforto e estilo que combina com TUDO"
+      urgencia: "⏳ Promoção relâmpago, corre que é por tempo limitado!"
+    - intro: "👟 Pra andar com estilo sem pesar no bolso"
+      urgencia: "🔥 Peças limitadas, não deixa pra depois!"
+    - intro: "🥿 Aquele calçado que serve pra tudo, com preço especial"
+      urgencia: "✨ Últimas unidades disponíveis, aproveita!"
 
 "Beleza e cosméticos":
-  intro: "💄 Seu ritual de beleza merece esse upgrade"
-  urgencia: "✨ Estoque limitado, quem chegar primeiro leva!"
   unidade_kit: "unidade"
+  variants:
+    - intro: "💄 Seu ritual de beleza merece esse upgrade"
+      urgencia: "✨ Estoque limitado, quem chegar primeiro leva!"
+    - intro: "💋 Aquele produtinho que não pode faltar na nécessaire"
+      urgencia: "🔥 Corre que o preço não fica assim por muito tempo!"
+    - intro: "✨ Beleza em dia sem pesar no bolso"
+      urgencia: "💖 Poucas unidades, garanta já o seu!"
 
 "Eletrônicos de beleza":
-  intro: "⚡ Esse é o queridinho que vai transformar sua rotina"
-  urgencia: "🔋 Poucas unidades com esse preço, aproveita agora!"
   unidade_kit: "unidade"
+  variants:
+    - intro: "⚡ Esse é o queridinho que vai transformar sua rotina"
+      urgencia: "🔋 Poucas unidades com esse preço, aproveita agora!"
+    - intro: "💇 Praticidade que faz toda diferença no dia a dia"
+      urgencia: "⚡ Estoque limitado, corre antes que acabe!"
+    - intro: "✨ Esse gadget de beleza tá com preço imperdível"
+      urgencia: "🔌 Últimas unidades, garanta o seu!"
 
 "Casa e acessórios":
-  intro: "🏠 Aquele detalhe que faz toda diferença"
-  urgencia: "🛒 Sai por esse preço só enquanto durar o estoque!"
   unidade_kit: "unidade"
+  variants:
+    - intro: "🏠 Aquele detalhe que faz toda diferença"
+      urgencia: "🛒 Sai por esse preço só enquanto durar o estoque!"
+    - intro: "🛋️ Deixa sua casa com outra cara sem gastar muito"
+      urgencia: "✨ Poucas unidades disponíveis, corre lá!"
+    - intro: "🏡 Praticidade e estilo pra casa por um preço especial"
+      urgencia: "🔥 Estoque limitado, aproveita agora!"
 
 "Fora do escopo":
-  intro: "📦 Achado bacana pra conferir"
-  urgencia: "✨ Aproveita enquanto tem estoque!"
   unidade_kit: "unidade"
+  variants:
+    - intro: "📦 Achado bacana pra conferir"
+      urgencia: "✨ Aproveita enquanto tem estoque!"
+    - intro: "🔎 Deu pra achar essa oferta diferente"
+      urgencia: "🛒 Corre que o estoque é limitado!"

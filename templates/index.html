@@ -38,10 +38,15 @@
       <span class="badge badge-status">{{ p.status }}</span>
     </div>
 
+    {% if p.image_url %}
+      <img class="product-image" src="{{ p.image_url }}" alt="{{ p.name }}" loading="lazy">
+    {% endif %}
+
     <h3>{{ p.name }}</h3>
 
     <div class="product-meta">
       <span>🌐 {{ p.platform or "-" }}</span>
+      {% if p.brand %}<span>🏷️ {{ p.brand }}</span>{% endif %}
       {% if p.store_name %}<span>🏬 {{ p.store_name }}</span>{% endif %}
       {% if p.original_price %}
         <span>💵 de R$ {{ "%.2f"|format(p.original_price)|replace(".", ",") }} por R$ {{ "%.2f"|format(p.promo_price)|replace(".", ",") }}</span>

@@ -37,18 +37,24 @@ def init_db():
         )
         """
     )
-    _ensure_external_id_column(conn)
+    _run_migrations(conn)
     conn.commit()
     conn.close()
 
 
-def _ensure_external_id_column(conn):
-    """Migração leve: adiciona a coluna external_id (usada para não duplicar
-    produtos importados via API a cada sincronização) em bancos criados
-    antes dessa funcionalidade existir."""
+def _run_migrations(conn):
+    """Migrações leves: adicionam colunas de versões mais novas do app em
+    bancos criados antes delas existirem, sem apagar nada que já estava
+    salvo."""
     columns = [row["name"] for row in conn.execute("PRAGMA table_info(products)").fetchall()]
+
     if "external_id" not in columns:
         conn.execute("ALTER TABLE products ADD COLUMN external_id TEXT")
+    if "brand" not in columns:
+        conn.execute("ALTER TABLE products ADD COLUMN brand TEXT")
+    if "image_url" not in columns:
+        conn.execute("ALTER TABLE products ADD COLUMN image_url TEXT")
+
     conn.execute(
         """
         CREATE UNIQUE INDEX IF NOT EXISTS idx_products_external
@@ -59,14 +65,17 @@ def _ensure_external_id_column(conn):
 
 
 def insert_product(product: dict) -> int:
+    product = {"brand": None, "image_url": None, **product}
     conn = get_connection()
     cur = conn.execute(
         """
         INSERT INTO products
             (name, category, platform, store_name, original_price, promo_price,
-             commission_rate, commission, link, coupon, extra_details, status)
+             commission_rate, commission, link, coupon, extra_details, status,
+             brand, image_url)
         VALUES (:name, :category, :platform, :store_name, :original_price, :promo_price,
-                :commission_rate, :commission, :link, :coupon, :extra_details, :status)
+                :commission_rate, :commission, :link, :coupon, :extra_details, :status,
+                :brand, :image_url)
         """,
         product,
     )
@@ -84,6 +93,7 @@ def upsert_shopee_product(product: dict) -> bool:
     pode já ter ajustado a categoria manualmente ou marcado como enviado).
     Retorna True se foi um produto novo, False se foi uma atualização.
     """
+    product = {"brand": None, "image_url": None, **product}
     conn = get_connection()
     existing = conn.execute(
         "SELECT id FROM products WHERE platform = ? AND external_id = ?",
@@ -95,7 +105,8 @@ def upsert_shopee_product(product: dict) -> bool:
             """
             UPDATE products
             SET name = :name, store_name = :store_name, promo_price = :promo_price,
-                commission_rate = :commission_rate, commission = :commission, link = :link
+                commission_rate = :commission_rate, commission = :commission, link = :link,
+                image_url = :image_url
             WHERE id = :id
             """,
             {**product, "id": existing["id"]},
@@ -108,9 +119,11 @@ def upsert_shopee_product(product: dict) -> bool:
         """
         INSERT INTO products
             (name, category, platform, store_name, original_price, promo_price,
-             commission_rate, commission, link, coupon, extra_details, status, external_id)
+             commission_rate, commission, link, coupon, extra_details, status, external_id,
+             brand, image_url)
         VALUES (:name, :category, :platform, :store_name, :original_price, :promo_price,
-                :commission_rate, :commission, :link, :coupon, :extra_details, :status, :external_id)
+                :commission_rate, :commission, :link, :coupon, :extra_details, :status, :external_id,
+                :brand, :image_url)
         """,
         product,
     )

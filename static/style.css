@@ -127,6 +127,14 @@ body {
 
 .product-card h3 { margin: 0; font-size: 1.05rem; }
 
+.product-image {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f2f0ec;
+}
+
 .product-meta {
   display: flex;
   flex-direction: column;
