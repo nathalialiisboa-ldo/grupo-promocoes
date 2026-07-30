@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
 
 load_dotenv()
 
@@ -128,16 +128,24 @@ def sync_shopee():
     return redirect(request.referrer or url_for("index"))
 
 
+def _is_ajax() -> bool:
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
 @app.route("/product/<int:product_id>/status", methods=["POST"])
 def set_status(product_id):
     new_status = request.form["status"]
     db.update_status(product_id, new_status)
+    if _is_ajax():
+        return jsonify(status=new_status)
     return redirect(request.referrer or url_for("index"))
 
 
 @app.route("/product/<int:product_id>/liked", methods=["POST"])
 def toggle_liked(product_id):
-    db.toggle_liked(product_id)
+    liked = db.toggle_liked(product_id)
+    if _is_ajax():
+        return jsonify(liked=liked)
     return redirect(request.referrer or url_for("index"))
 
 
@@ -145,12 +153,17 @@ def toggle_liked(product_id):
 def set_category(product_id):
     new_category = request.form["category"]
     db.update_category(product_id, new_category)
+    if _is_ajax():
+        product = dict(db.get_product(product_id))
+        return jsonify(category=new_category, generated_text=generate_text(product))
     return redirect(request.referrer or url_for("index"))
 
 
 @app.route("/product/<int:product_id>/delete", methods=["POST"])
 def delete_product(product_id):
     db.delete_product(product_id)
+    if _is_ajax():
+        return jsonify(deleted=True)
     flash("Produto removido.", "success")
     return redirect(request.referrer or url_for("index"))
 

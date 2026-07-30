@@ -65,15 +65,15 @@
     <button type="button" class="btn copy-btn" data-copy-target="text-{{ p.id }}">📋 Copiar texto</button>
 
     <div class="product-actions">
-      <form method="post" action="{{ url_for('set_category', product_id=p.id) }}">
-        <select name="category" onchange="this.form.submit()">
+      <form method="post" action="{{ url_for('set_category', product_id=p.id) }}" class="ajax-form" data-action="category">
+        <select name="category" onchange="this.form.requestSubmit()">
           {% for cat in all_categories %}
             <option value="{{ cat }}" {% if cat == p.category %}selected{% endif %}>{{ cat }}</option>
           {% endfor %}
         </select>
       </form>
 
-      <form method="post" action="{{ url_for('set_status', product_id=p.id) }}">
+      <form method="post" action="{{ url_for('set_status', product_id=p.id) }}" class="ajax-form" data-action="status">
         {% if p.status == "pendente" %}
           <input type="hidden" name="status" value="enviado">
           <button type="submit" class="btn btn-primary">Marcar como enviado</button>
@@ -83,7 +83,7 @@
         {% endif %}
       </form>
 
-      <form method="post" action="{{ url_for('toggle_liked', product_id=p.id) }}">
+      <form method="post" action="{{ url_for('toggle_liked', product_id=p.id) }}" class="ajax-form" data-action="liked">
         {% if p.liked %}
           <button type="submit" class="btn btn-liked">⭐ Bom exemplo</button>
         {% else %}
@@ -91,7 +91,7 @@
         {% endif %}
       </form>
 
-      <form method="post" action="{{ url_for('delete_product', product_id=p.id) }}" onsubmit="return confirm('Remover este produto?')">
+      <form method="post" action="{{ url_for('delete_product', product_id=p.id) }}" class="ajax-form" data-action="delete" onsubmit="return confirm('Remover este produto?')">
         <button type="submit" class="btn btn-danger">Excluir</button>
       </form>
     </div>
