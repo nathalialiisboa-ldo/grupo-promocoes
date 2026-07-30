@@ -1,0 +1,61 @@
+# Lista de marcas conhecidas usada para tentar reconhecer a marca dentro do
+# nome de produtos vindos da Shopee (que não tem campo de marca separado).
+# Só funciona pra marcas que estiverem nesta lista - adicione as marcas que
+# você mais vende/vê por aqui, sem mexer em código.
+#
+# Dica: se duas marcas da lista aparecerem uma dentro da outra (ex: "Vult" e
+# "Vult Cosméticos"), coloque a mais específica primeiro - o app usa a
+# primeira que bater.
+
+brands:
+  # Eletrônicos de beleza
+  - "Philips Walita"
+  - "Philips"
+  - "Babyliss"
+  - "Taiff"
+  - "Gama Italy"
+  - "Mondial"
+  - "Britânia"
+  - "Cadence"
+  - "Lizplus"
+
+  # Beleza e cosméticos
+  - "Ruby Rose"
+  - "Vult"
+  - "Eudora"
+  - "Natura"
+  - "Boticário"
+  - "Avon"
+  - "Mari Maria"
+  - "Bruna Tavares"
+  - "BT Skin"
+  - "Dailus"
+  - "Océane"
+  - "Racco"
+  - "Quem disse, Berenice?"
+  - "Payot"
+  - "Nivea"
+  - "L'Oréal"
+  - "Maybelline"
+  - "Colgate"
+  - "Tresemmé"
+  - "Pantene"
+  - "Seda"
+  - "Cadiveu"
+  - "Salon Line"
+  - "Novex"
+  - "Lola Cosmetics"
+
+  # Roupas e calçados
+  - "Nike"
+  - "Adidas"
+  - "Puma"
+  - "Havaianas"
+  - "Melissa"
+  - "Renner"
+  - "Hering"
+
+  # Casa e acessórios
+  - "Tramontina"
+  - "Oxford"
+  - "Electrolux"

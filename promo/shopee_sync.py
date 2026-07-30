@@ -6,8 +6,14 @@ from pathlib import Path
 import yaml
 
 from . import db
+from .brand_detect import detect_brand
 from .categorize import categorize_product
-from .shopee_client import ShopeeAPIError, generate_short_link, search_product_offers
+from .shopee_client import (
+    ShopeeAPIError,
+    generate_short_link,
+    search_product_offers,
+    search_shop_offers,
+)
 from .text_utils import clean_repeated_phrases, format_currency_2_decimals
 
 CATEGORIES_PATH = Path(__file__).resolve().parent.parent / "data" / "categories.yaml"
@@ -69,6 +75,7 @@ def _map_node_to_product(node: dict) -> dict:
         "category": categorize_product(name),
         "platform": "Shopee",
         "store_name": node.get("shopName"),
+        "shop_id": node.get("shopId"),
         "original_price": None,
         "promo_price": float(price) if price is not None else None,
         "commission_rate": commission_rate,
@@ -77,7 +84,7 @@ def _map_node_to_product(node: dict) -> dict:
         "coupon": None,
         "extra_details": None,
         "status": "pendente",
-        "brand": None,
+        "brand": detect_brand(name),
         "image_url": node.get("imageUrl"),
     }
 
@@ -132,6 +139,34 @@ def run_sync(rate_limit_seconds: int = None, results_per_category: int = None) -
                 category, term, len(nodes),
             )
             time.sleep(rate_limit_seconds)
+
+    for shop_id in db.get_liked_shopee_shop_ids():
+        try:
+            nodes = search_shop_offers(int(shop_id), limit=results_per_category)
+        except ShopeeAPIError as exc:
+            msg = f'Loja preferida (shop_id {shop_id}): {exc}'
+            logger.error(msg)
+            summary["erros"].append(msg)
+            time.sleep(rate_limit_seconds)
+            continue
+
+        for node in nodes:
+            product = _map_node_to_product(node)
+            if not product["name"] or product["promo_price"] is None or not product["link"]:
+                continue
+
+            summary["encontrados"] += 1
+            is_new = db.upsert_shopee_product(product)
+            if is_new:
+                summary["novos"] += 1
+            else:
+                summary["atualizados"] += 1
+
+        logger.info(
+            "Loja preferida (shop_id %s): %d oferta(s) processada(s)",
+            shop_id, len(nodes),
+        )
+        time.sleep(rate_limit_seconds)
 
     logger.info(
         "Sincronização concluída: %d encontrados, %d novos, %d atualizados, %d erro(s)",

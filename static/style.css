@@ -165,6 +165,7 @@ body {
 
 .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary-dark); }
 .btn-danger { background: #f2dede; color: #a94442; }
+.btn-liked { background: #fff3cd; color: #8a6d00; border-color: #f0d896; }
 
 .product-actions {
   display: flex;

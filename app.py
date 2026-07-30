@@ -26,7 +26,8 @@ def inject_globals():
 def index():
     category = request.args.get("category") or None
     status = request.args.get("status") or None
-    rows = db.list_products(category=category, status=status)
+    liked_only = request.args.get("liked") == "1"
+    rows = db.list_products(category=category, status=status, liked_only=liked_only)
 
     products = []
     for row in rows:
@@ -39,6 +40,7 @@ def index():
         products=products,
         selected_category=category or "",
         selected_status=status or "",
+        liked_only=liked_only,
     )
 
 
@@ -130,6 +132,12 @@ def sync_shopee():
 def set_status(product_id):
     new_status = request.form["status"]
     db.update_status(product_id, new_status)
+    return redirect(request.referrer or url_for("index"))
+
+
+@app.route("/product/<int:product_id>/liked", methods=["POST"])
+def toggle_liked(product_id):
+    db.toggle_liked(product_id)
     return redirect(request.referrer or url_for("index"))
 
 

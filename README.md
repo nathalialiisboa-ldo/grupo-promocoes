@@ -38,7 +38,12 @@ enviado para a nuvem.
    que atualiza o texto gerado imediatamente.
 6. Cada card mostra o **texto pronto pra copiar** (botão "Copiar texto") e um
    botão para marcar como **enviado/pendente**.
-7. Filtros por categoria e por status ficam no topo da lista de produtos.
+7. Filtros por categoria, status e "⭐ Só bons exemplos" ficam no topo da
+   lista de produtos.
+8. Marque um produto vindo da Shopee como **"⭐ Bom exemplo"** quando gostar
+   dele: nas próximas sincronizações, o app passa a buscar mais produtos
+   direto da mesma loja (usando o parâmetro oficial de busca por loja da
+   API), além da busca normal por categoria.
 
 ## Configurando a API da Shopee (opcional, mas recomendado)
 
@@ -59,10 +64,16 @@ enviado para a nuvem.
 A busca faz **uma chamada à API por termo de pesquisa** (um termo por
 categoria, configurável em `data/categories.yaml` na chave
 `shopee_search_terms`), com uma pausa entre chamadas (`SHOPEE_RATE_LIMIT_SECONDS`
-no `.env`, padrão 2 segundos) para respeitar o limite de taxa da Shopee.
+no `.env`, padrão 2 segundos) para respeitar o limite de taxa da Shopee, mais
+uma chamada extra por loja marcada como "⭐ Bom exemplo" (veja acima).
 Produtos já importados antes (mesmo item da Shopee) têm preço, comissão e
 link atualizados numa nova busca, mas a categoria e o status (pendente/
 enviado) que você já tiver ajustado manualmente **não são sobrescritos**.
+
+Por padrão, a busca por palavra-chave só traz ofertas de vendedores "key
+seller" da Shopee (`SHOPEE_KEY_SELLER_ONLY=true` no `.env`), o que tende a
+reduzir anúncios de baixa qualidade/spam de palavra-chave no título. Se isso
+estiver deixando de fora ofertas boas, troque para `false`.
 
 ## Agendamento automático da busca na Shopee (Windows)
 
@@ -96,6 +107,10 @@ qualquer momento para testar).
 - `data/categories.yaml`: as palavras-chave usadas para categorizar produtos
   automaticamente, e os termos de busca usados na API da Shopee
   (`shopee_search_terms`). Adicione ou remova termos livremente.
+- `data/known_brands.yaml`: lista de marcas usada para tentar reconhecer a
+  marca dentro do nome de produtos vindos da Shopee ou CSV (que não têm um
+  campo de marca separado). Só reconhece marcas que estiverem nesta lista -
+  adicione as marcas que você mais vende.
 
 ## Regras de geração de texto
 

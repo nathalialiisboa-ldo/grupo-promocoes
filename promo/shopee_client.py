@@ -15,8 +15,8 @@ DEFAULT_API_URL = "https://open-api.affiliate.shopee.com.br/graphql"
 # relevância com o termo buscado - sem isso a API pode devolver produtos
 # sem relação nenhuma com a palavra-chave.
 PRODUCT_OFFER_QUERY = """
-query ProductOffer($keyword: String, $sortType: Int, $page: Int, $limit: Int) {
-  productOfferV2(keyword: $keyword, sortType: $sortType, page: $page, limit: $limit) {
+query ProductOffer($keyword: String, $sortType: Int, $isKeySeller: Boolean, $page: Int, $limit: Int) {
+  productOfferV2(keyword: $keyword, sortType: $sortType, isKeySeller: $isKeySeller, page: $page, limit: $limit) {
     nodes {
       itemId
       productName
@@ -27,6 +27,37 @@ query ProductOffer($keyword: String, $sortType: Int, $page: Int, $limit: Int) {
       sales
       productLink
       offerLink
+      shopId
+      shopName
+      imageUrl
+    }
+    pageInfo {
+      page
+      limit
+      hasNextPage
+    }
+  }
+}
+"""
+
+# Busca ofertas de uma loja específica (usada para trazer mais produtos de
+# lojas que já renderam bons exemplos, via listType=DETAIL_SHOP + matchId).
+# A documentação diz que listType/matchId não podem ser usados junto com
+# keyword/sortType, por isso é uma query separada.
+SHOP_OFFER_QUERY = """
+query ShopOffer($listType: Int, $matchId: Int64, $page: Int, $limit: Int) {
+  productOfferV2(listType: $listType, matchId: $matchId, page: $page, limit: $limit) {
+    nodes {
+      itemId
+      productName
+      priceMin
+      priceMax
+      commissionRate
+      commission
+      sales
+      productLink
+      offerLink
+      shopId
       shopName
       imageUrl
     }
@@ -40,6 +71,7 @@ query ProductOffer($keyword: String, $sortType: Int, $page: Int, $limit: Int) {
 """
 
 SORT_RELEVANCE_DESC = 1
+LIST_TYPE_DETAIL_SHOP = 5
 
 # Mutation usada como reserva para gerar um link curto de afiliada quando a
 # busca de ofertas não devolve um `offerLink` pronto (raro, já que
@@ -118,15 +150,36 @@ def _request(query: str, variables: dict) -> dict:
     return data.get("data", {})
 
 
+def _key_seller_only() -> bool:
+    return os.environ.get("SHOPEE_KEY_SELLER_ONLY", "true").strip().lower() not in (
+        "false", "0", "nao", "não",
+    )
+
+
 def search_product_offers(keyword: str, limit: int = 20, page: int = 1) -> list:
     """Busca ofertas de produtos por palavra-chave, ordenadas por relevância
-    com o termo buscado.
+    com o termo buscado. Por padrão, filtra só vendedores "key seller" da
+    Shopee (mais confiáveis) - desative com SHOPEE_KEY_SELLER_ONLY=false no
+    .env se isso estiver deixando de fora ofertas boas.
+
+    Retorna uma lista de dicts no formato bruto devolvido pela API (nodes).
+    """
+    variables = {"keyword": keyword, "sortType": SORT_RELEVANCE_DESC, "page": page, "limit": limit}
+    if _key_seller_only():
+        variables["isKeySeller"] = True
+    data = _request(PRODUCT_OFFER_QUERY, variables)
+    return data.get("productOfferV2", {}).get("nodes", []) or []
+
+
+def search_shop_offers(shop_id: int, limit: int = 20, page: int = 1) -> list:
+    """Busca ofertas de produtos de uma loja específica (usado para trazer
+    mais produtos de lojas que você já marcou como bom exemplo).
 
     Retorna uma lista de dicts no formato bruto devolvido pela API (nodes).
     """
     data = _request(
-        PRODUCT_OFFER_QUERY,
-        {"keyword": keyword, "sortType": SORT_RELEVANCE_DESC, "page": page, "limit": limit},
+        SHOP_OFFER_QUERY,
+        {"listType": LIST_TYPE_DETAIL_SHOP, "matchId": shop_id, "page": page, "limit": limit},
     )
     return data.get("productOfferV2", {}).get("nodes", []) or []
 

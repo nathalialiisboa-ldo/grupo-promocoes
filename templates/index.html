@@ -20,6 +20,11 @@
       <option value="enviado" {% if selected_status == "enviado" %}selected{% endif %}>Enviado</option>
     </select>
   </label>
+
+  <label>
+    <input type="checkbox" name="liked" value="1" onchange="this.form.submit()" {% if liked_only %}checked{% endif %}>
+    ⭐ Só bons exemplos
+  </label>
 </form>
 
 <form method="post" action="{{ url_for('sync_shopee') }}" class="filters">
@@ -75,6 +80,14 @@
         {% else %}
           <input type="hidden" name="status" value="pendente">
           <button type="submit" class="btn">Marcar como pendente</button>
+        {% endif %}
+      </form>
+
+      <form method="post" action="{{ url_for('toggle_liked', product_id=p.id) }}">
+        {% if p.liked %}
+          <button type="submit" class="btn btn-liked">⭐ Bom exemplo</button>
+        {% else %}
+          <button type="submit" class="btn">☆ Marcar como bom exemplo</button>
         {% endif %}
       </form>
 
