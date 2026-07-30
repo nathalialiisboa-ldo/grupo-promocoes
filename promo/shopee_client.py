@@ -8,13 +8,15 @@ import requests
 DEFAULT_API_URL = "https://open-api.affiliate.shopee.com.br/graphql"
 
 # Query "productOfferV2": busca ofertas de produtos por palavra-chave na
-# Shopee Affiliate Open API. Se a documentação que a Shopee te passou usar
-# nomes de campo diferentes destes, ajuste a query e o mapeamento em
-# `promo/shopee_sync.py` (_map_node_to_product) - são os dois únicos lugares
-# que conhecem o formato da resposta.
+# Shopee Affiliate Open API (confirmado com a documentação oficial em
+# affiliate.shopee.com.br/open_api/home -> "Get Product Offer List").
+# `sortType: 1` = RELEVANCE_DESC, que a própria documentação diz ser
+# obrigatório para a busca por palavra-chave realmente ordenar pela
+# relevância com o termo buscado - sem isso a API pode devolver produtos
+# sem relação nenhuma com a palavra-chave.
 PRODUCT_OFFER_QUERY = """
-query ProductOffer($keyword: String, $page: Int, $limit: Int) {
-  productOfferV2(keyword: $keyword, page: $page, limit: $limit) {
+query ProductOffer($keyword: String, $sortType: Int, $page: Int, $limit: Int) {
+  productOfferV2(keyword: $keyword, sortType: $sortType, page: $page, limit: $limit) {
     nodes {
       itemId
       productName
@@ -36,8 +38,15 @@ query ProductOffer($keyword: String, $page: Int, $limit: Int) {
 }
 """
 
+SORT_RELEVANCE_DESC = 1
+
 # Mutation usada como reserva para gerar um link curto de afiliada quando a
-# busca de ofertas não devolve um `offerLink` pronto.
+# busca de ofertas não devolve um `offerLink` pronto (raro, já que
+# productOfferV2 devolve offerLink diretamente). Diferente da query acima,
+# o nome e o formato exatos desta mutation ainda não foram confirmados na
+# documentação "Get Short Link" da Shopee - se ela falhar, o link do
+# produto (sem tag de afiliada) é usado como reserva e o erro fica
+# registrado no log, sem travar a sincronização.
 GENERATE_SHORT_LINK_MUTATION = """
 mutation GenerateShortLink($originUrl: String!) {
   generateShortLink(originUrl: $originUrl) {
@@ -109,11 +118,15 @@ def _request(query: str, variables: dict) -> dict:
 
 
 def search_product_offers(keyword: str, limit: int = 20, page: int = 1) -> list:
-    """Busca ofertas de produtos por palavra-chave.
+    """Busca ofertas de produtos por palavra-chave, ordenadas por relevância
+    com o termo buscado.
 
     Retorna uma lista de dicts no formato bruto devolvido pela API (nodes).
     """
-    data = _request(PRODUCT_OFFER_QUERY, {"keyword": keyword, "page": page, "limit": limit})
+    data = _request(
+        PRODUCT_OFFER_QUERY,
+        {"keyword": keyword, "sortType": SORT_RELEVANCE_DESC, "page": page, "limit": limit},
+    )
     return data.get("productOfferV2", {}).get("nodes", []) or []
 
 

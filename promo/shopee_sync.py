@@ -31,6 +31,21 @@ def _load_search_terms() -> dict:
     return config.get("shopee_search_terms", {})
 
 
+def _format_commission_rate(raw_rate) -> str:
+    """A Shopee devolve a taxa de comissão como fração (ex: "0.25" = 25%),
+    conforme a documentação oficial (campo `commissionRate` da
+    ProductOfferV2). Converte para uma porcentagem legível."""
+    if raw_rate is None:
+        return None
+    try:
+        percentage = float(raw_rate) * 100
+    except (TypeError, ValueError):
+        return str(raw_rate)
+    if percentage == int(percentage):
+        return f"{int(percentage)}%"
+    return f"{percentage:.2f}%".replace(".", ",")
+
+
 def _map_node_to_product(node: dict) -> dict:
     name = node.get("productName") or ""
     price = node.get("priceMin")
@@ -45,7 +60,7 @@ def _map_node_to_product(node: dict) -> dict:
             logger.warning("Falha ao gerar link curto para '%s': %s", name, exc)
             link = node.get("productLink")
 
-    commission_rate = node.get("commissionRate")
+    commission_rate = _format_commission_rate(node.get("commissionRate"))
 
     return {
         "external_id": str(node["itemId"]) if node.get("itemId") is not None else None,
@@ -55,7 +70,7 @@ def _map_node_to_product(node: dict) -> dict:
         "store_name": node.get("shopName"),
         "original_price": None,
         "promo_price": float(price) if price is not None else None,
-        "commission_rate": f"{commission_rate}%" if commission_rate is not None else None,
+        "commission_rate": commission_rate,
         "commission": node.get("commission"),
         "link": link,
         "coupon": None,
