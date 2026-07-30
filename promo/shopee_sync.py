@@ -8,6 +8,7 @@ import yaml
 from . import db
 from .categorize import categorize_product
 from .shopee_client import ShopeeAPIError, generate_short_link, search_product_offers
+from .text_utils import clean_repeated_phrases, format_currency_2_decimals
 
 CATEGORIES_PATH = Path(__file__).resolve().parent.parent / "data" / "categories.yaml"
 LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "shopee_sync.log"
@@ -47,7 +48,7 @@ def _format_commission_rate(raw_rate) -> str:
 
 
 def _map_node_to_product(node: dict) -> dict:
-    name = node.get("productName") or ""
+    name = clean_repeated_phrases(node.get("productName") or "")
     price = node.get("priceMin")
     if price is None:
         price = node.get("priceMax")
@@ -71,7 +72,7 @@ def _map_node_to_product(node: dict) -> dict:
         "original_price": None,
         "promo_price": float(price) if price is not None else None,
         "commission_rate": commission_rate,
-        "commission": node.get("commission"),
+        "commission": format_currency_2_decimals(node.get("commission")),
         "link": link,
         "coupon": None,
         "extra_details": None,
