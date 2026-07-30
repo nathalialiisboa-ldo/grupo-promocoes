@@ -177,3 +177,19 @@ keywords:
     - relogio
     - óculos de sol
     - oculos de sol
+
+# Termos usados para buscar ofertas na Shopee Affiliate Open API: o app faz
+# uma busca por termo, então quanto mais termos por categoria, mais chamadas
+# à API a cada sincronização (respeite o limite de taxa). Pode ajustar ou
+# adicionar termos livremente.
+shopee_search_terms:
+  "Eletrônicos de beleza":
+    - "secador de cabelo"
+  "Roupas":
+    - "vestido feminino"
+  "Calçados":
+    - "tênis feminino"
+  "Beleza e cosméticos":
+    - "batom"
+  "Casa e acessórios":
+    - "organizador"

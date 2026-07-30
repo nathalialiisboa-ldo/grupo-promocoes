@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 venv/
 data/app.db
+data/shopee_sync.log
+data/shopee_sync_stdout.log
+.env

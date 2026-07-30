@@ -37,8 +37,25 @@ def init_db():
         )
         """
     )
+    _ensure_external_id_column(conn)
     conn.commit()
     conn.close()
+
+
+def _ensure_external_id_column(conn):
+    """Migração leve: adiciona a coluna external_id (usada para não duplicar
+    produtos importados via API a cada sincronização) em bancos criados
+    antes dessa funcionalidade existir."""
+    columns = [row["name"] for row in conn.execute("PRAGMA table_info(products)").fetchall()]
+    if "external_id" not in columns:
+        conn.execute("ALTER TABLE products ADD COLUMN external_id TEXT")
+    conn.execute(
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_products_external
+        ON products(platform, external_id)
+        WHERE external_id IS NOT NULL
+        """
+    )
 
 
 def insert_product(product: dict) -> int:
@@ -57,6 +74,49 @@ def insert_product(product: dict) -> int:
     new_id = cur.lastrowid
     conn.close()
     return new_id
+
+
+def upsert_shopee_product(product: dict) -> bool:
+    """Insere um produto vindo da busca de ofertas da Shopee, ou atualiza
+    preço/comissão/link se um produto com o mesmo external_id já existir.
+
+    Não sobrescreve a categoria nem o status de produtos já existentes (você
+    pode já ter ajustado a categoria manualmente ou marcado como enviado).
+    Retorna True se foi um produto novo, False se foi uma atualização.
+    """
+    conn = get_connection()
+    existing = conn.execute(
+        "SELECT id FROM products WHERE platform = ? AND external_id = ?",
+        (product["platform"], product["external_id"]),
+    ).fetchone()
+
+    if existing:
+        conn.execute(
+            """
+            UPDATE products
+            SET name = :name, store_name = :store_name, promo_price = :promo_price,
+                commission_rate = :commission_rate, commission = :commission, link = :link
+            WHERE id = :id
+            """,
+            {**product, "id": existing["id"]},
+        )
+        conn.commit()
+        conn.close()
+        return False
+
+    conn.execute(
+        """
+        INSERT INTO products
+            (name, category, platform, store_name, original_price, promo_price,
+             commission_rate, commission, link, coupon, extra_details, status, external_id)
+        VALUES (:name, :category, :platform, :store_name, :original_price, :promo_price,
+                :commission_rate, :commission, :link, :coupon, :extra_details, :status, :external_id)
+        """,
+        product,
+    )
+    conn.commit()
+    conn.close()
+    return True
 
 
 def list_products(category: str = None, status: str = None):

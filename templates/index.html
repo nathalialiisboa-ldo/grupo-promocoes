@@ -22,6 +22,10 @@
   </label>
 </form>
 
+<form method="post" action="{{ url_for('sync_shopee') }}" class="filters">
+  <button type="submit" class="btn">🔄 Buscar ofertas Shopee agora</button>
+</form>
+
 {% if not products %}
   <p class="empty-state">Nenhum produto encontrado. Importe um CSV ou cadastre um produto manualmente.</p>
 {% endif %}

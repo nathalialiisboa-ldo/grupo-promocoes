@@ -1,9 +1,13 @@
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash
+
+load_dotenv()
 
 from promo import db
 from promo.categorize import get_all_categories, categorize_product
 from promo.textgen import generate_text
 from promo.csv_import import parse_csv
+from promo.shopee_sync import run_sync
 
 app = Flask(__name__)
 app.secret_key = "grupo-promocoes-local"
@@ -95,6 +99,29 @@ def upload_csv():
         return redirect(url_for("index"))
 
     return render_template("upload_csv.html")
+
+
+@app.route("/sync-shopee", methods=["POST"])
+def sync_shopee():
+    try:
+        summary = run_sync()
+    except Exception as exc:  # falha inesperada não pode derrubar o app
+        flash(f"Não foi possível buscar ofertas da Shopee agora: {exc}", "error")
+        return redirect(request.referrer or url_for("index"))
+
+    if summary["erros"]:
+        flash(
+            f"Busca na Shopee concluída com erros: {summary['novos']} novo(s), "
+            f"{summary['atualizados']} atualizado(s). Erros: {'; '.join(summary['erros'])}",
+            "error",
+        )
+    else:
+        flash(
+            f"Busca na Shopee concluída: {summary['novos']} produto(s) novo(s), "
+            f"{summary['atualizados']} atualizado(s).",
+            "success",
+        )
+    return redirect(request.referrer or url_for("index"))
 
 
 @app.route("/product/<int:product_id>/status", methods=["POST"])
