@@ -29,7 +29,9 @@ query ProductOffer($keyword: String, $sortType: Int, $isKeySeller: Boolean, $pag
       offerLink
       shopId
       shopName
+      shopType
       imageUrl
+      ratingStar
     }
     pageInfo {
       page
@@ -59,7 +61,9 @@ query ShopOffer($listType: Int, $matchId: Int64, $page: Int, $limit: Int) {
       offerLink
       shopId
       shopName
+      shopType
       imageUrl
+      ratingStar
     }
     pageInfo {
       page

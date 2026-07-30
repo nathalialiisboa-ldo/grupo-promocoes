@@ -75,6 +75,29 @@ seller" da Shopee (`SHOPEE_KEY_SELLER_ONLY=true` no `.env`), o que tende a
 reduzir anúncios de baixa qualidade/spam de palavra-chave no título. Se isso
 estiver deixando de fora ofertas boas, troque para `false`.
 
+### Filtro de qualidade
+
+Por padrão, a busca pede um lote maior de candidatos à API
+(`SHOPEE_FETCH_BATCH_SIZE`, padrão 30) e mantém só as `SHOPEE_RESULTS_PER_CATEGORY`
+melhores (padrão 5) que passarem no filtro de qualidade:
+
+- tem foto (`imageUrl` preenchido);
+- nota mínima `SHOPEE_MIN_RATING` (padrão 4,5 de 5);
+- vendas mínimas `SHOPEE_MIN_SALES` (padrão 20);
+- se `SHOPEE_REQUIRE_TRUSTED_SHOP=true` (padrão), só lojas oficiais ou
+  preferenciais da Shopee.
+
+Se estiver vindo pouca coisa ou nada (filtro rígido demais para o seu nicho),
+diminua `SHOPEE_MIN_RATING`/`SHOPEE_MIN_SALES` ou troque
+`SHOPEE_REQUIRE_TRUSTED_SHOP` para `false` no `.env`. Todas essas opções
+ficam documentadas com exemplo no `.env.example`.
+
+Por padrão a busca automática cobre só **Eletrônicos de beleza** e **Beleza
+e cosméticos** (as categorias em `shopee_search_terms` no
+`data/categories.yaml`) - Roupas, Calçados e Casa e acessórios continuam
+funcionando normalmente via CSV ou cadastro manual, só não são buscadas
+automaticamente. Adicione categorias de volta nesse arquivo quando quiser.
+
 ## Agendamento automático da busca na Shopee (Windows)
 
 Como a Shopee autoriza oficialmente essas chamadas (diferente de scraping),

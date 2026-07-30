@@ -180,16 +180,13 @@ keywords:
 
 # Termos usados para buscar ofertas na Shopee Affiliate Open API: o app faz
 # uma busca por termo, então quanto mais termos por categoria, mais chamadas
-# à API a cada sincronização (respeite o limite de taxa). Pode ajustar ou
-# adicionar termos livremente.
+# à API a cada sincronização (respeite o limite de taxa). Só categorias
+# listadas aqui são buscadas automaticamente pela API - Roupas, Calçados e
+# Casa e acessórios continuam funcionando normalmente via CSV/cadastro
+# manual, só não entram na busca automática da Shopee. Adicione categorias
+# de volta aqui quando quiser voltar a buscá-las.
 shopee_search_terms:
   "Eletrônicos de beleza":
     - "secador de cabelo"
-  "Roupas":
-    - "vestido feminino"
-  "Calçados":
-    - "tênis feminino"
   "Beleza e cosméticos":
     - "batom"
-  "Casa e acessórios":
-    - "organizador"
