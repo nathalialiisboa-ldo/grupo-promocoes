@@ -3,21 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Grupo Promoções</title>
+  <title>Entrar - Grupo Promoções</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <header class="topbar">
-    <h1><a href="{{ url_for('index') }}">🛍️ Grupo Promoções</a></h1>
-    <nav>
-      <a href="{{ url_for('index') }}">Produtos</a>
-      <a href="{{ url_for('upload_csv') }}">Importar CSV</a>
-      <a href="{{ url_for('add_product') }}">+ Cadastrar produto</a>
-      {% if login_enabled %}<a href="{{ url_for('logout') }}">Sair</a>{% endif %}
-    </nav>
-  </header>
+  <main class="container" style="max-width: 400px; margin-top: 4rem;">
+    <h2>🛍️ Grupo Promoções</h2>
 
-  <main class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="flash-list">
@@ -28,9 +20,13 @@
       {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
+    <form method="post" class="form">
+      <label>
+        Senha
+        <input type="password" name="password" required autofocus>
+      </label>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
   </main>
-
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -1,5 +1,8 @@
+import os
+import secrets
+
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, session, url_for, flash
 
 load_dotenv()
 
@@ -10,16 +13,52 @@ from promo.csv_import import parse_csv
 from promo.shopee_sync import run_sync
 
 app = Flask(__name__)
-app.secret_key = "grupo-promocoes-local"
+# Em produção (hospedado), defina APP_SECRET_KEY no .env com um valor fixo -
+# senão as sessões (login) são invalidadas toda vez que o servidor reinicia.
+app.secret_key = os.environ.get("APP_SECRET_KEY") or secrets.token_hex(32)
 
 db.init_db()
 
 PLATFORMS = ["Shopee", "Mercado Livre", "Amazon", "Magalu", "Shein"]
 
 
+@app.before_request
+def require_login():
+    app_password = os.environ.get("APP_PASSWORD")
+    if not app_password:
+        return  # sem senha configurada (uso local): não exige login
+    if request.endpoint in ("login", "static"):
+        return
+    if not session.get("logged_in"):
+        return redirect(url_for("login", next=request.path))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        app_password = os.environ.get("APP_PASSWORD")
+        if request.form.get("password") == app_password:
+            session["logged_in"] = True
+            return redirect(request.args.get("next") or url_for("index"))
+        flash("Senha incorreta.", "error")
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.pop("logged_in", None)
+    return redirect(url_for("login"))
+
+
 @app.context_processor
 def inject_globals():
-    return {"all_categories": get_all_categories(), "platforms": PLATFORMS}
+    return {
+        "all_categories": get_all_categories(),
+        "platforms": PLATFORMS,
+        "login_enabled": bool(os.environ.get("APP_PASSWORD")),
+        "show_shopee_buttons": os.environ.get("SHOW_SHOPEE_BUTTONS", "false").strip().lower()
+        in ("true", "1"),
+    }
 
 
 @app.route("/")

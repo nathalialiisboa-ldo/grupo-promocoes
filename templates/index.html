@@ -21,15 +21,19 @@
     </select>
   </label>
 
+  {% if show_shopee_buttons %}
   <label>
     <input type="checkbox" name="liked" value="1" onchange="this.form.submit()" {% if liked_only %}checked{% endif %}>
     ⭐ Só bons exemplos
   </label>
+  {% endif %}
 </form>
 
+{% if show_shopee_buttons %}
 <form method="post" action="{{ url_for('sync_shopee') }}" class="filters">
   <button type="submit" class="btn">🔄 Buscar ofertas Shopee agora</button>
 </form>
+{% endif %}
 
 <form method="post" action="{{ url_for('clear_all_products') }}" class="filters"
       onsubmit="return confirm('Isso vai apagar TODOS os produtos da lista (de qualquer origem: Shopee, CSV, cadastro manual), incluindo os já marcados como enviado. Essa ação não pode ser desfeita. Quer continuar?')">
@@ -88,6 +92,7 @@
         {% endif %}
       </form>
 
+      {% if show_shopee_buttons %}
       <form method="post" action="{{ url_for('toggle_liked', product_id=p.id) }}" class="ajax-form" data-action="liked">
         {% if p.liked %}
           <button type="submit" class="btn btn-liked">⭐ Bom exemplo</button>
@@ -95,6 +100,7 @@
           <button type="submit" class="btn">☆ Marcar como bom exemplo</button>
         {% endif %}
       </form>
+      {% endif %}
 
       <form method="post" action="{{ url_for('delete_product', product_id=p.id) }}" class="ajax-form" data-action="delete" onsubmit="return confirm('Remover este produto?')">
         <button type="submit" class="btn btn-danger">Excluir</button>

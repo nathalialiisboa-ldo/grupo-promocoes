@@ -14,8 +14,13 @@ python app.py
 
 Abra http://127.0.0.1:5000 no navegador.
 
-Os dados ficam salvos em `data/app.db` (SQLite), na sua máquina. Nada é
-enviado para a nuvem.
+Os dados ficam salvos em `data/app.db` (SQLite). Por padrão o app roda só
+na sua máquina, sem depender de nada em nuvem; veja "Hospedando na
+internet" mais abaixo se quiser acessá-lo por um link, de qualquer lugar.
+
+Por padrão a tela mostra só o fluxo de CSV/cadastro manual - os botões de
+busca automática da Shopee ficam escondidos (ative com
+`SHOW_SHOPEE_BUTTONS=true` no `.env` se quiser voltar a usá-los).
 
 ## Como usar
 
@@ -122,6 +127,23 @@ Essa tarefa só atualiza os produtos no banco de dados (não abre o navegador
 nem precisa do app aberto). Você pode conferir se rodou olhando o arquivo
 `data/shopee_sync.log` (ou rodando `python fetch_shopee.py` manualmente a
 qualquer momento para testar).
+
+## Hospedando na internet (opcional)
+
+Se quiser acessar o app por um link fixo, de qualquer computador/celular,
+em vez de rodar `python app.py` toda vez, dá pra hospedar de graça no
+PythonAnywhere. Veja o passo a passo completo na conversa com a Claude, ou
+resumidamente:
+
+1. Crie uma conta gratuita em pythonanywhere.com.
+2. Configure `APP_PASSWORD` no `.env` de lá (senha de acesso) e
+   `APP_SECRET_KEY` (qualquer texto longo aleatório) - sem isso, o app
+   fica acessível pra qualquer um que souber o link.
+3. Puxe o código do GitHub, instale as dependências, e configure a aba
+   "Web" apontando pro `app.py`.
+4. Toda vez que o código for atualizado no GitHub, é preciso repetir um
+   `git pull` + recarregar o app na aba "Web" do PythonAnywhere (não é
+   automático no plano gratuito).
 
 ## Ajustando os textos e a categorização sem mexer em código
 
