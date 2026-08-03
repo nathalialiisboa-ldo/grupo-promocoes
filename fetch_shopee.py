@@ -5,9 +5,11 @@ Tarefas do Windows para rodar 2x ao dia (veja o README, seção "Agendamento
 automático da Shopee"). Não abre o navegador nem depende do app estar
 rodando - só atualiza o arquivo data/app.db.
 """
+from pathlib import Path
+
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 from promo import db
 from promo.shopee_sync import run_sync

@@ -1,10 +1,15 @@
 import os
 import secrets
+from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for, flash
 
-load_dotenv()
+# Caminho explícito (em vez de deixar o dotenv adivinhar a partir do
+# diretório de trabalho atual) - importa em hospedagens tipo PythonAnywhere,
+# onde o processo WSGI pode rodar com um diretório de trabalho diferente
+# da pasta do projeto.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 from promo import db
 from promo.categorize import get_all_categories, categorize_product
